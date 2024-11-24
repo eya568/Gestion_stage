@@ -21,7 +21,7 @@
                     @csrf
                     <div class="form-group">
                         <label for="studentCIN">CIN</label>
-                        <input type="text" class="form-control" id="studentCIN" name="cin" required unique/>
+                        <input type="text" class="form-control" id="studentCIN" name="cin" required />
                     </div>
                     <div class="form-group">
                         <label for="studentName">Nom</label>
@@ -36,11 +36,13 @@
                         <select name="classe_id" id="classe" class="form-control" required>
                             <option value="" disabled selected>Choisir une classe</option>
                             @foreach ($classes as $classe)
-                                <option value="{{ $classe->id }}">{{ $classe->classe }}</option> <!-- Use 'id' instead of 'classe' -->
+                                <option value="{{ $classe->id }}" 
+                                    {{ isset($selectedClasse) && $selectedClasse == $classe->id ? 'selected' : '' }}>
+                                    {{ $classe->classe }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
-                    
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>

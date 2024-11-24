@@ -1,4 +1,5 @@
 <!-- Edit Student Modal -->
+<!-- Edit Student Modal -->
 <div class="modal fade" id="editStudentModal" tabindex="-1" role="dialog" aria-labelledby="editStudentModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -8,12 +9,12 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            @if(isset($student))
-
             <div class="modal-body">
-                <form action="{{ route('students.update', ['student' => $student->id]) }}" method="POST" id="editStudentForm">
+                <form id="editStudentForm" method="POST">
                     @csrf
                     @method('PATCH')
+
+                    <!-- Champ caché pour l'ID de l'étudiant -->
                     <input type="hidden" id="editStudentId" name="id" />
 
                     <div class="form-group">
@@ -33,7 +34,12 @@
 
                     <div class="form-group">
                         <label for="editStudentClass">Classe</label>
-                        <input type="text" class="form-control" id="editStudentClass" name="classe" required />
+                        <select class="form-control" id="editStudentClass" name="classe_id" required>
+                            <option value="" disabled>Choisir une classe</option>
+                            @foreach ($classes as $classe)
+                                <option value="{{ $classe->id }}">{{ $classe->classe }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="modal-footer">
@@ -41,57 +47,40 @@
                         <button type="submit" class="btn btn-primary">Modifier</button>
                     </div>
                 </form>
-                @else
-                <p>No student to edit.</p>
-                @endif
             </div>
         </div>
     </div>
 </div>
+
 <script>
-    function editStudent(student) {
-        // Fill form inputs with the student's data
-        document.getElementById('editStudentId').value = student.id;
-        document.getElementById('editStudentCIN').value = student.cin;
-        document.getElementById('editStudentName').value = student.nom;
-        document.getElementById('editStudentFirstName').value = student.prenom;
-        document.getElementById('editStudentClass').value = student.classe;
-
-        // Update the form action dynamically with the student ID
-        const form = document.getElementById('editStudentForm');
-        form.action = `/students/${student.id}`; // Make sure the ID is inserted into the URL
-
-        // Show the modal
-        $('#editStudentModal').modal('show');
-    }
     document.addEventListener("DOMContentLoaded", function() {
-        // Attach a click event listener to all elements with the class "editStudentBtn"
+        // Attache un événement de clic sur tous les boutons de modification
         document.querySelectorAll('.editStudentBtn').forEach(button => {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
 
-                // Get the student ID from the button's data-id attribute
+                // ID de l'étudiant
                 const studentId = this.getAttribute('data-id');
 
-                // Fetch student data using AJAX (assuming you have an API route set up)
+                // Appel AJAX pour récupérer les données de l'étudiant
                 fetch(`/students/${studentId}/edit`)
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) throw new Error("Erreur lors de la récupération des données");
+                        return response.json();
+                    })
                     .then(student => {
-                        // Populate modal fields with student data
+                        // Remplir le formulaire avec les données récupérées
                         document.getElementById('editStudentId').value = student.id;
                         document.getElementById('editStudentCIN').value = student.cin;
                         document.getElementById('editStudentName').value = student.nom;
                         document.getElementById('editStudentFirstName').value = student.prenom;
-                        document.getElementById('editStudentClass').value = student.classe;
+                        document.getElementById('editStudentClass').value = student.classe_id;
 
-                        // Update the form action dynamically with the student ID
+                        // Mettre à jour l'action du formulaire
                         const form = document.getElementById('editStudentForm');
                         form.action = `/students/${student.id}`;
-
-                        // Show the modal
-                        $('#editStudentModal').modal('show');
                     })
-                    .catch(error => console.error('Error fetching student data:', error));
+                    .catch(error => console.error('Erreur:', error));
             });
         });
     });

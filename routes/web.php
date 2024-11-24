@@ -69,3 +69,5 @@ Route::post('/classes', [ClassController::class, 'store'])->name('classes.store'
 Route::get('/students/{id}/edit', [StudentController::class, 'edit'])->name('students.edit'); // This one
 Route::patch('/students/{student}', [StudentController::class, 'update'])->name('students.update');
 Route::delete('/students/{id}', [StudentController::class, 'destroy'])->name('students.destroy');
+// routes/web.php
+Route::post('/students', [StudentController::class, 'store'])->name('students.store');

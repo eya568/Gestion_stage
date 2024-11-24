@@ -18,13 +18,17 @@
                 <form id="deleteStudentForm" method="POST" action="{{ route('students.destroy', ':studentId') }}">
                     @csrf
                     @method('DELETE')
+                    <!-- Hidden field to pass the current class filter -->
+                    <input type="hidden" name="classe" value="{{ request('classe') }}">
                     <button type="submit" class="btn btn-danger">Supprimer</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
 <script>
+    // Function to dynamically set the student ID in the form's action URL
     function setDeleteStudentId(studentId) {
         const form = document.getElementById('deleteStudentForm');
         form.action = form.action.replace(':studentId', studentId);

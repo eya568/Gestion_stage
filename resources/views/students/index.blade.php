@@ -36,11 +36,13 @@
             <td>
                 <ul class="action-list">
                     <li>
+                        
                         <a href="#" class="editStudentBtn" data-id="{{ $student->id }}" title="Modifier" data-toggle="modal" data-target="#editStudentModal">
                             <i class="fa fa-pencil-alt"></i>
                         </a>
                     </li>
                     <li>
+                        
                         <a href="#" data-toggle="modal" data-target="#confirmDeleteModal" title="Supprimer" onclick="setDeleteStudentId('{{ $student->id }}')">
                             <i class="fa fa-trash"></i>
                         </a>
@@ -72,10 +74,14 @@
     </div>
 </div>
 
+
+
 <div class="fixed-buttons">
-    <button class="btn btn-default" title="Ajouter Étudiant" data-toggle="modal" data-target="#addStudentModal">
-        <i class="fa fa-plus"></i> Ajouter Étudiant
-    </button>
+   <!-- Bouton pour ouvrir le modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addStudentModal">
+    Ajouter un étudiant
+</button>
+
     <button class="btn btn-green" title="Importer Excel" data-toggle="modal" data-target="#importExcelModal">
         <i class="fas fa-file-excel"></i> Importer XL
     </button>

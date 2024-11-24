@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Classe;
+use App\Models\Student;
 use Illuminate\Http\Request;
+
 class ClassController extends Controller
 {
     /**
@@ -27,18 +29,29 @@ class ClassController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'classe' => 'required|string|max:255|unique:classes,classe',
+        // Valider les données reçues
+        $validated = $request->validate([
+            'cin' => 'required|string|max:255',
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'classe' => 'required|exists:classes,classe', // Valider par le nom de classe
         ]);
-
-        // Create the new class
-        Classe::create([
-            'classe' => $request->input('classe'),
-        ]);
-
-        // Redirect back to the classes list with success message
-        return redirect()->route('classes.index')->with('success', 'Classe ajoutée avec succès.');
+    
+        // Récupérer l'ID de la classe à partir de son nom
+        $classe = Classe::where('classe', $request->classe)->firstOrFail();
+    
+        // Créer le nouvel étudiant
+        $student = new Student();
+        $student->cin = $request->cin;
+        $student->nom = $request->nom;
+        $student->prenom = $request->prenom;
+        $student->classe_id = $classe->id; // Attribuer l'ID correspondant
+        $student->save();
+    
+        // Rediriger vers la liste des étudiants avec le filtre actuel
+        return redirect()->route('students.index', ['classe' => $request->classe])
+            ->with('success', 'Étudiant ajouté avec succès');
     }
-
+    
    
 }
