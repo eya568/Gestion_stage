@@ -3,20 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Classe;
-use App\Models\Student;
 use Illuminate\Http\Request;
 
 class ClassController extends Controller
 {
     /**
-     * Show the list of classes.
+     * Display a listing of classes.
      */
     public function index(Request $request)
     {
         $classes = Classe::query();
 
         if ($search = $request->input('search')) {
-            $classes->where('classe', 'like', "%$search%");
+            $classes->where('id', 'like', "%$search%");
         }
 
         $classes = $classes->paginate(10);
@@ -29,29 +28,18 @@ class ClassController extends Controller
      */
     public function store(Request $request)
     {
-        // Valider les données reçues
+        // Validate the class name field
         $validated = $request->validate([
-            'cin' => 'required|string|max:255',
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'classe' => 'required|exists:classes,classe', // Valider par le nom de classe
+            'classe' => 'required|string|max:255|unique:classes,classe', // Ensure 'classe' is unique
         ]);
-    
-        // Récupérer l'ID de la classe à partir de son nom
-        $classe = Classe::where('classe', $request->classe)->firstOrFail();
-    
-        // Créer le nouvel étudiant
-        $student = new Student();
-        $student->cin = $request->cin;
-        $student->nom = $request->nom;
-        $student->prenom = $request->prenom;
-        $student->classe_id = $classe->id; // Attribuer l'ID correspondant
-        $student->save();
-    
-        // Rediriger vers la liste des étudiants avec le filtre actuel
-        return redirect()->route('students.index', ['classe' => $request->classe])
-            ->with('success', 'Étudiant ajouté avec succès');
+
+        // Create a new class
+        $classe = new Classe();
+        $classe->classe = $validated['classe'];
+        $classe->save();
+
+        // Redirect back with success message
+        return redirect()->route('classes.index')
+            ->with('success', 'Classe ajoutée avec succès.');
     }
-    
-   
 }
